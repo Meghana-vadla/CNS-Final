@@ -1,0 +1,80 @@
+import java.util.*;
+
+public class Columnar {
+
+    // ---------------- Encryption ----------------
+    static String enc(String t, String key) {
+        int c = key.length();                             // number of columns
+        int r = (int) Math.ceil((double) t.length() / c); // number of rows
+        char[][] m = new char[r][c];
+
+        // Fill the matrix row by row
+        for (int i = 0, k = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (k < t.length()) {
+                    m[i][j] = t.charAt(k++);
+                } else {
+                    m[i][j] = 'X'; // padding only if needed
+                }
+            }
+        }
+
+        // Read column by column based on alphabetical order of key
+        StringBuilder sb = new StringBuilder();
+        for (char ch = 'A'; ch <= 'Z'; ch++) {
+            for (int j = 0; j < c; j++) {
+                if (key.charAt(j) == ch) {
+                    for (int i = 0; i < r; i++) {
+                        sb.append(m[i][j]);
+                    }
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+
+    // ---------------- Decryption ----------------
+    static String dec(String e, String key) {
+        int c = key.length();
+        int r = e.length() / c;
+        char[][] m = new char[r][c];
+        int k = 0;
+
+        // Fill matrix column by column in key order
+        for (char ch = 'A'; ch <= 'Z'; ch++) {
+            for (int j = 0; j < c; j++) {
+                if (key.charAt(j) == ch) {
+                    for (int i = 0; i < r; i++) {
+                        m[i][j] = e.charAt(k++);
+                    }
+                }
+            }
+        }
+
+        // Read row by row to reconstruct plaintext
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                sb.append(m[i][j]);
+            }
+        }
+
+        // Remove padding X's at the end
+        return sb.toString().replaceAll("X+$", "");
+    }
+
+    // ---------------- Main ----------------
+    public static void main(String[] args) {
+        String t = "HELLOWORLD";
+        String key = "ZEBRA";
+
+        String e = enc(t, key);
+        String d = dec(e, key);
+
+        System.out.println("Plaintext : " + t);
+        System.out.println("Key       : " + key);
+        System.out.println("Enc       : " + e);
+        System.out.println("Dec       : " + d);
+    }
+}
