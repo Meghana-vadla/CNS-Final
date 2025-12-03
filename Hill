@@ -1,0 +1,45 @@
+public class Hill {
+    // Key matrix (2x2)
+    static int[][] k = {
+        {3, 3},
+        {2, 5}
+    };
+    // Inverse key matrix (mod 26)
+    static int[][] ki = {
+        {15, 17},
+        {20, 9}
+    };
+    // Function to process (encrypt/decrypt) text using matrix m
+    static String proc(String t, int[][] m) {
+        // Convert to uppercase, remove non-letters
+        t = t.toUpperCase().replaceAll("[^A-Z]", ""); 
+        
+        // If odd length, pad with 'X'
+        if (t.length() % 2 != 0) 
+            t += "X";
+
+        StringBuilder sb = new StringBuilder();
+
+        // Process text in pairs
+        for (int i = 0; i < t.length(); i += 2) {
+            int a = t.charAt(i) - 'A';
+            int b = t.charAt(i + 1) - 'A';
+
+            int c = (m[0][0] * a + m[0][1] * b) % 26;
+            int d = (m[1][0] * a + m[1][1] * b) % 26;
+
+            sb.append((char) (c + 'A'))
+              .append((char) (d + 'A'));
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] a) {
+        String t = "HELP";
+        String e = proc(t, k);   // Encrypt
+        String d = proc(e, ki);  // Decrypt
+
+        System.out.println("Enc: " + e);
+        System.out.println("Dec: " + d);
+    }
+}
