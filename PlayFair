@@ -1,0 +1,64 @@
+import java.util.*;
+
+public class Playfair {
+    static char[][] m = new char[5][5];
+
+    // Clean text: uppercase, remove non-letters, replace J with I
+    static String clean(String t) {
+        return t.toUpperCase().replaceAll("[^A-Z]", "").replace("J", "I");
+    }
+
+    // Build key matrix
+    static void build(String k) {
+        String s = clean(k + "ABCDEFGHIKLMNOPQRSTUVWXYZ"), r = "";
+        for (char c : s.toCharArray())
+            if (!r.contains("" + c))
+                r += c;
+        for (int i = 0; i < 25; i++)
+            m[i / 5][i % 5] = r.charAt(i);
+    }
+
+    // Encrypt or Decrypt
+    static String encdec(String t, boolean dec) {
+        t = clean(t);
+        if (t.length() % 2 != 0) t += "X";
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < t.length(); i += 2) {
+            char a = t.charAt(i), b = t.charAt(i + 1);
+            int r1 = 0, c1 = 0, r2 = 0, c2 = 0;
+
+            for (int r = 0; r < 5; r++) {
+                for (int c = 0; c < 5; c++) {
+                    if (m[r][c] == a) { r1 = r; c1 = c; }
+                    if (m[r][c] == b) { r2 = r; c2 = c; }
+                }
+            }
+
+            if (r1 == r2) { // same row
+                c1 = (c1 + (dec ? -1 : 1) + 5) % 5;
+                c2 = (c2 + (dec ? -1 : 1) + 5) % 5;
+            } else if (c1 == c2) { // same column
+                r1 = (r1 + (dec ? -1 : 1) + 5) % 5;
+                r2 = (r2 + (dec ? -1 : 1) + 5) % 5;
+            } else { // rectangle swap
+                int temp = c1;
+                c1 = c2;
+                c2 = temp;
+            }
+
+            sb.append(m[r1][c1]).append(m[r2][c2]);
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        build("MONARCHY");
+        String t = "Instruments";
+        String e = encdec(t, false);
+        String d = encdec(e, true);
+
+        System.out.println("Enc: " + e);
+        System.out.println("Dec: " + d);
+    }
+}
