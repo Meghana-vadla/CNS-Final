@@ -1,0 +1,72 @@
+public class RailFence {
+    
+    // Encryption
+    static String enc(String text, int rails) {
+        if (rails == 1) return text;
+
+        StringBuilder[] sb = new StringBuilder[rails];
+        for (int i = 0; i < rails; i++) sb[i] = new StringBuilder();
+
+        int row = 0, dir = 1; // dir = +1 (down), -1 (up)
+        for (char c : text.toCharArray()) {
+            sb[row].append(c);
+            if (row == 0) dir = 1;
+            else if (row == rails - 1) dir = -1;
+            row += dir;
+        }
+
+        StringBuilder res = new StringBuilder();
+        for (StringBuilder s : sb) res.append(s);
+        return res.toString();
+    }
+
+    // Decryption
+    static String dec(String cipher, int rails) {
+        if (rails == 1) return cipher;
+
+        // Step 1: Create zigzag pattern with placeholders
+        boolean[][] mark = new boolean[rails][cipher.length()];
+        int row = 0, dir = 1;
+        for (int i = 0; i < cipher.length(); i++) {
+            mark[row][i] = true;
+            if (row == 0) dir = 1;
+            else if (row == rails - 1) dir = -1;
+            row += dir;
+        }
+
+        // Step 2: Fill zigzag with cipher chars row by row
+        char[][] mat = new char[rails][cipher.length()];
+        int idx = 0;
+        for (int i = 0; i < rails; i++) {
+            for (int j = 0; j < cipher.length(); j++) {
+                if (mark[i][j] && idx < cipher.length()) {
+                    mat[i][j] = cipher.charAt(idx++);
+                }
+            }
+        }
+
+        // Step 3: Read text in zigzag order
+        StringBuilder res = new StringBuilder();
+        row = 0; dir = 1;
+        for (int j = 0; j < cipher.length(); j++) {
+            res.append(mat[row][j]);
+            if (row == 0) dir = 1;
+            else if (row == rails - 1) dir = -1;
+            row += dir;
+        }
+        return res.toString();
+    }
+
+    // Main
+    public static void main(String[] args) {
+        String text = "HELLOWORLD";
+        int rails = 3;
+
+        String enc = enc(text, rails);
+        String dec = dec(enc, rails);
+
+        System.out.println("Text: " + text);
+        System.out.println("Enc : " + enc);
+        System.out.println("Dec : " + dec);
+    }
+}
