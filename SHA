@@ -1,0 +1,39 @@
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Scanner;
+
+public class SHA512Hash {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter text to generate SHA-512 hash: ");
+        String input = sc.nextLine();
+
+        try {
+            // Create MessageDigest instance for SHA-512
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+
+            // Compute hash
+            byte[] messageDigest = md.digest(input.getBytes());
+
+            // Convert byte array into signum representation
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            // Convert message digest into hex value
+            String hashText = no.toString(16);
+
+            // Pad with leading zeros to make it 128 chars long
+            while (hashText.length() < 128) {
+                hashText = "0" + hashText;
+            }
+
+            System.out.println("\nSHA-512 Hash Value:");
+            System.out.println(hashText);
+
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Error: SHA-512 algorithm not found.");
+        }
+    }
+}
