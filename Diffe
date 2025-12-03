@@ -1,0 +1,38 @@
+import java.util.Scanner;
+import java.math.BigInteger;
+
+public class DiffieHellman {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter value of p: ");
+        BigInteger p = sc.nextBigInteger();
+
+        System.out.print("Enter primitive root g: ");
+        BigInteger g = sc.nextBigInteger();
+
+        System.out.print("Enter Alice's secret number (a): ");
+        BigInteger a = sc.nextBigInteger();
+
+        System.out.print("Enter Bob's secret number (b): ");
+        BigInteger b = sc.nextBigInteger();
+
+        // Public keys
+        BigInteger A = g.modPow(a, p); // Alice's public key
+        BigInteger B = g.modPow(b, p); // Bob's public key
+
+        // Shared secret
+        BigInteger S_A = B.modPow(a, p); // Alice's shared secret
+        BigInteger S_B = A.modPow(b, p); // Bob's shared secret
+
+        System.out.println("\nAlice's Public Key: " + A);
+        System.out.println("Bob's Public Key: " + B);
+
+        if (S_A.equals(S_B)) {
+            System.out.println("\nShared Secret Key: " + S_A);
+        } else {
+            System.out.println("\nKeys do not match.");
+        }
+    }
+}
